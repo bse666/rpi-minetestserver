@@ -1,9 +1,9 @@
-FROM linuxserver/baseimage
+FROM resin/rpi-raspbian
 
 MAINTAINER Sparklyballs <sparklyballs@linuxserver.io>
 
 
-ENV APTLIST="libbz2-dev lua-socket libleveldb-dev luajit libluajit-5.1-dev libsqlite3-dev \
+ENV APTLIST="ca-certificates libbz2-dev lua-socket libleveldb-dev luajit libluajit-5.1-dev libsqlite3-dev \
 libcurl4-gnutls-dev libfreetype6-dev libhiredis0.10 libjsoncpp-dev"
 
 ENV BUILD_APTLIST="build-essential git-core gettext cmake doxygen libirrlicht-dev libjpeg-dev libxxf86vm-dev libogg-dev libvorbis-dev libopenal-dev zlib1g-dev libgmp-dev libpng12-dev libgl1-mesa-dev libhiredis-dev"
@@ -24,19 +24,20 @@ ENV configOPTS="-DENABLE_GETTEXT=TRUE \
 
 
 # Set the locale
-RUN locale-gen en_US.UTF-8 && \
+#RUN locale-gen en_US.UTF-8 && \
 
 # update apt and install build dependencies
-apt-get update -q && \
+RUN apt-get update -q && \
 apt-get install \
 --no-install-recommends \
 $APTLIST \
-$BUILD_APTLIST -qy && \
+$BUILD_APTLIST -qy
 
 # clone minitest git repository
-cd /tmp && \
+RUN cd /tmp && \
 git clone --depth 1 https://github.com/minetest/minetest.git && \
 cd /tmp/minetest && \
+mkdir -p /defaults && \
 cp minetest.conf.example /defaults/minetest.conf && \
 
 # build and configure minitest
